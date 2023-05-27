@@ -18,7 +18,6 @@ impl Segway {
 
 pub fn init_segway(environment: &crate::environment::Environment) -> Segway {
     let wheel_radius = 80.0;
-    let body_height = 30.0;
     Segway {
         x: screen_width() / 2.0,
         y: screen_height() - environment.ground_height - wheel_radius,
@@ -31,18 +30,13 @@ pub fn init_segway(environment: &crate::environment::Environment) -> Segway {
 pub fn draw_segway(segway: &Segway) {
     let wheel_radius = 80.0;
     let body_height = 200.0;
-    let body_width = 10.0;
 
     let handlebar_length = 20.0;
 
     draw_circle_lines(segway.x, segway.y, wheel_radius, 5.0, BLUE);
 
-    println!("{} {}", segway.x, segway.y);
-
     let body_x = segway.x + wheel_radius;
-
     let body_y = segway.y;
-
 
     draw_line(body_x, body_y - body_height, body_x, body_y, 8.0, GREEN);
 
