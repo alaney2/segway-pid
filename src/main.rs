@@ -37,8 +37,8 @@ async fn main() {
 
         handle_input(&mut segway, &mut environment);
 
+        draw_environment(&environment, &segway);
         draw_segway(&segway);
-        draw_environment(&environment);
 
         update_gui(&mut gui, &segway, &pid_controller);
 
@@ -66,10 +66,16 @@ fn update_game(
 }
 
 fn handle_input(segway: &mut segway::Segway, environment: &mut environment::Environment) {
+    let min_tilt_angle = -30.0_f32.to_radians();
+    let max_tilt_angle = 30.0_f32.to_radians();
+
     if is_key_down(KeyCode::A) {
-        segway.angle += 0.01;
+        segway.tilt_angle -= 0.01;
     }
     if is_key_down(KeyCode::D) {
-        segway.angle -= 0.01;
+        segway.tilt_angle += 0.01;
     }
+
+    segway.tilt_angle = segway.tilt_angle.clamp(min_tilt_angle, max_tilt_angle);
 }
+

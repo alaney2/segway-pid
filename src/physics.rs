@@ -22,6 +22,9 @@ impl PIDController {
 
     pub fn update(&mut self, error: f32, dt: f32) -> f32 {
         self.integral += error * dt;
+        let integral_limit = 1.0;
+        self.integral = self.integral.clamp(-integral_limit, integral_limit);
+
         let derivative = (error - self.prev_error) / dt;
         self.prev_error = error;
 
@@ -35,8 +38,8 @@ pub fn update_game(
     pid_controller: &mut PIDController,
     dt: f32,
 ) {
-    let desired_angle = 0.0;
-    let error = desired_angle - segway.angle;
+    let desired_tilt_angle = 0.0;
+    let error = desired_tilt_angle - segway.tilt_angle;
     let angular_acceleration = pid_controller.update(error, dt);
-    segway.update(angular_acceleration);
+    segway.update(angular_acceleration, dt);
 }

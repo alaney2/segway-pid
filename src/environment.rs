@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use std::f32::consts::PI;
 
 pub struct Environment {
     pub ground_height: f32,
@@ -10,7 +11,7 @@ pub fn init_environment() -> Environment {
     }
 }
 
-pub fn draw_environment(environment: &Environment) {
+pub fn draw_environment(environment: &Environment, segway: &crate::segway::Segway) {
     let window_width = screen_width();
     let window_height = screen_height();
 
@@ -19,23 +20,27 @@ pub fn draw_environment(environment: &Environment) {
         window_height - environment.ground_height,
         window_width,
         window_height - environment.ground_height,
-        2.0,
-        DARKGRAY,
+        6.0,
+        LIGHTGRAY,
     );
 
     let num_lines = 10;
-    let line_spacing = window_width / (num_lines as f32 + 1.0);
-    let line_height = 50.0;
+    let line_spacing = segway.wheel_radius * PI;
+    let line_height = 20.0;
+    let tilt_offset = 15.0;
 
-    for i in 0..num_lines {
-        let line_x = (i as f32 + 1.0) * line_spacing;
+    let line_offset = segway.distance_traveled % line_spacing;
+
+    for i in -num_lines..num_lines {
+        let line_x = (i as f32) * line_spacing - line_offset;
         draw_line(
-            line_x,
+            segway.x + line_x,
             window_height - environment.ground_height,
-            line_x,
-            window_height - environment.ground_height - line_height,
-            2.0,
+            segway.x + line_x - tilt_offset,
+            window_height - environment.ground_height + line_height,
+            4.0,
             LIGHTGRAY,
         );
     }
 }
+
