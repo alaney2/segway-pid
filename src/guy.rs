@@ -34,7 +34,7 @@ pub fn draw_guy(guy: &Guy, segway: &crate::segway::Segway) {
 
   // Arm:
   let arm_length = 42.0;
-  if (guy.tilt_angle == 0.0) {
+  if guy.tilt_angle == 0.0 {
     // no joint
     // draw_line(guy.start_x, segway.y - segway_height, segway.x + segway.wheel_radius, segway.y - segway_height, 6.0, LIGHTGRAY);
 
@@ -57,7 +57,7 @@ pub fn draw_guy(guy: &Guy, segway: &crate::segway::Segway) {
     let half_x = (segway.x + segway.wheel_radius - (((segway.y - segway_height) - b) / m)) / 2.0;
     let acos_angle = (half_x / arm_length).acos();
 
-    if (acos_angle.is_nan()) {
+    if acos_angle.is_nan() {
       draw_line(((segway.y - segway_height) - b) / m, segway.y - segway_height, segway.x + segway.wheel_radius, segway.y - segway_height, 6.0, LIGHTGRAY);
     }
 

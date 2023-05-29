@@ -51,7 +51,6 @@ pub fn init_segway(environment: &crate::environment::Environment) -> Segway {
 
 pub fn draw_segway(segway: &Segway) {
     let body_height = 160.0;
-    let handlebar_length = 20.0;
 
     let body_x = segway.x + segway.wheel_radius;
     let body_y = segway.y;

@@ -76,10 +76,10 @@ fn handle_input(segway: &mut segway::Segway, guy: &mut guy::Guy, environment: &m
     let min_tilt_angle = -10.0_f32.to_radians();
     let max_tilt_angle = 10.0_f32.to_radians();
 
-    if is_key_down(KeyCode::A) {
+    if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) {
         guy.tilt_angle -= 0.01;
     }
-    if is_key_down(KeyCode::D) {
+    if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right){
         guy.tilt_angle += 0.01;
     }
 
