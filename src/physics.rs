@@ -1,5 +1,6 @@
 use crate::segway::Segway;
 use crate::environment::Environment;
+use crate::guy::Guy;
 
 pub struct PIDController {
     pub p: f32,
@@ -34,12 +35,16 @@ impl PIDController {
 
 pub fn update_game(
     segway: &mut Segway,
+    guy: &mut Guy,
     environment: &mut Environment,
     pid_controller: &mut PIDController,
     dt: f32,
+    user_input: f32,
 ) {
-    let desired_tilt_angle = 0.0;
-    let error = desired_tilt_angle - segway.tilt_angle;
+    let bias = 0.1;
+    let desired_tilt_angle = user_input + bias;
+    let error = desired_tilt_angle - guy.tilt_angle;
     let angular_acceleration = pid_controller.update(error, dt);
     segway.update(angular_acceleration, dt);
+    guy.update(segway, dt);
 }

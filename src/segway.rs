@@ -10,7 +10,6 @@ pub struct Segway {
     pub wheel_radius: f32,
     pub wheel_thickness: f32,
     pub speed: f32,
-    pub tilt_angle: f32,
     pub distance_traveled: f32,
 }
 
@@ -21,6 +20,7 @@ impl Segway {
 
         // let friction = 0.99;
         // self.speed *= friction;
+
         self.distance_traveled += self.speed * delta_time;
 
         self.angular_velocity = self.speed / self.wheel_radius;
@@ -40,8 +40,7 @@ pub fn init_segway(environment: &crate::environment::Environment) -> Segway {
         angular_acceleration: 0.0,
         wheel_radius,
         wheel_thickness,
-        speed: 100.0,
-        tilt_angle: 0.0,
+        speed: 200.0,
         distance_traveled: 0.0,
     }
 }
@@ -53,13 +52,20 @@ pub fn draw_segway(segway: &Segway) {
     let body_x = segway.x + segway.wheel_radius;
     let body_y = segway.y;
 
-    let frame_end_x = body_x + body_height * segway.tilt_angle.sin();
-    let frame_end_y = body_y - body_height * segway.tilt_angle.cos();
+    let body_end_x = body_x + body_height / 8.0;
+    let body_end_y = body_y - body_height / 2.0;
+
+    let frame_end_x = body_x;
+    let frame_end_y = body_y - body_height;
     
     // frame
-    draw_line(body_x, body_y, frame_end_x, frame_end_y, 6.0, GREEN);
+    draw_line(body_x, body_y, body_end_x, body_end_y, 12.0, DARKGRAY);
+    draw_line(body_end_x, body_end_y, frame_end_x, frame_end_y, 6.0, DARKGRAY);
+    //handlebar
+    draw_circle(frame_end_x - 2.0, frame_end_y, 6.0, DARKGRAY);
     // wheel
     draw_circle_lines(segway.x, segway.y, segway.wheel_radius, segway.wheel_thickness, LIGHTGRAY);
+    draw_circle(segway.x, segway.y, segway.wheel_radius - segway.wheel_thickness / 2.0, DARKGRAY);
 
     // wheel line
     let line_length = segway.wheel_radius * 2.0 - segway.wheel_thickness;
@@ -75,7 +81,7 @@ pub fn draw_segway(segway: &Segway) {
         line_end_x,
         line_end_y,
         6.0,
-        GREEN,
+        LIGHTGRAY,
     );
 }
 

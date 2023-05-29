@@ -1,5 +1,6 @@
 use crate::segway::Segway;
 use crate::physics::PIDController;
+use crate::guy::Guy;
 use egui_macroquad::egui;
 use macroquad::prelude::*;
 
@@ -23,7 +24,7 @@ pub fn init_gui() -> Gui {
     }
 }
 
-pub fn update_gui(gui: &mut Gui, segway: &Segway, pid_controller: &PIDController) {
+pub fn update_gui(gui: &mut Gui, segway: &Segway, guy: &Guy, pid_controller: &PIDController) {
     egui_macroquad::ui(|ctx| {
         egui::Window::new("Segway PID Controller")
             .show(ctx, |ui| {
@@ -33,6 +34,11 @@ pub fn update_gui(gui: &mut Gui, segway: &Segway, pid_controller: &PIDController
                 ui.label(format!("Integral: {:.2}", pid_controller.integral));
                 ui.label(format!("Error: {:.2}", gui.error));
                 ui.label(format!("Derivative: {:.2}", gui.derivative));
+                ui.label(format!("Angular Velocity: {:.2}", segway.angular_velocity));
+                ui.label(format!("Angular Acceleration: {:.2}", segway.angular_acceleration));
+                ui.label(format!("Distance Traveled: {:.2}", segway.distance_traveled));
+                ui.label(format!("Speed: {:.2}", segway.speed));
+                ui.label(format!("Guy Tilt: {:.2}", guy.tilt_angle));
             });
     });
 
