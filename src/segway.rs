@@ -25,6 +25,7 @@ impl Segway {
 
         self.angular_velocity = self.speed / self.wheel_radius;
         self.speed += self.angular_acceleration * delta_time;
+        self.speed = self.speed.clamp(-1000.0, 1000.0);
         self.angle = (self.angle - self.angular_velocity * delta_time) % (2.0 * PI);
     }
 }
@@ -75,14 +76,15 @@ pub fn draw_segway(segway: &Segway) {
     let line_end_x = segway.x + line_length / 2.0 * adjusted_angle.cos();
     let line_end_y = segway.y + line_length / 2.0 * adjusted_angle.sin();
 
-    draw_line(
-        line_start_x,
-        line_start_y,
-        line_end_x,
-        line_end_y,
-        6.0,
-        LIGHTGRAY,
-    );
+    draw_line(line_start_x, line_start_y, line_end_x, line_end_y, 6.0, LIGHTGRAY);
+
+    // let adjusted_angle = segway.angle;
+    // let line_start_x = segway.x - line_length / 2.0 * adjusted_angle.cos();
+    // let line_start_y = segway.y - line_length / 2.0 * adjusted_angle.sin();
+    // let line_end_x = segway.x + line_length / 2.0 * adjusted_angle.cos();
+    // let line_end_y = segway.y + line_length / 2.0 * adjusted_angle.sin();
+
+    // draw_line(line_start_x, line_start_y, line_end_x, line_end_y, 6.0, LIGHTGRAY);
 }
 
 

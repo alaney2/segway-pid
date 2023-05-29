@@ -41,9 +41,8 @@ pub fn update_game(
     dt: f32,
     user_input: f32,
 ) {
-    let bias = 0.1;
-    let desired_tilt_angle = user_input + bias;
-    let error = desired_tilt_angle - guy.tilt_angle;
+    let desired_tilt_angle = 0.0;
+    let error = guy.tilt_angle - desired_tilt_angle;
     let angular_acceleration = pid_controller.update(error, dt);
     segway.update(angular_acceleration, dt);
     guy.update(segway, dt);

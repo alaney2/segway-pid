@@ -31,7 +31,16 @@ pub fn init_guy(segway: &crate::segway::Segway) -> Guy {
 pub fn draw_guy(guy: &Guy, segway: &crate::segway::Segway) {
   let segway_height = 160.0;
   draw_line(guy.start_x, guy.start_y, guy.end_x, guy.end_y, 10.0, LIGHTGRAY);
+  
   // arm length : 100
   // Arm:
-  draw_line(guy.start_x, segway.y - segway_height, segway.x + segway.wheel_radius, segway.y - segway_height, 6.0, LIGHTGRAY);
+  if (guy.tilt_angle == 0.0) {
+    draw_line(guy.start_x, segway.y - segway_height, segway.x + segway.wheel_radius, segway.y - segway_height, 6.0, LIGHTGRAY);
+  } else {
+
+    let m = (guy.end_y - guy.start_y) / (guy.end_x - guy.start_x);
+    let b = guy.start_y - m * guy.start_x;
+    draw_line( ((segway.y - segway_height) - b) / m, segway.y - segway_height, segway.x + segway.wheel_radius, segway.y - segway_height, 6.0, LIGHTGRAY);
+  }
+
 }
