@@ -14,7 +14,7 @@ pub struct Segway {
 }
 
 impl Segway {
-    pub fn update(&mut self, angular_acceleration: f32, delta_time: f32) {
+    pub fn update(&mut self, angular_acceleration: f32, delta_time: f32, guy: &crate::guy::Guy) {
         self.angular_acceleration = angular_acceleration;
         self.angular_velocity += self.angular_acceleration;
 
@@ -24,7 +24,10 @@ impl Segway {
         self.distance_traveled += self.speed * delta_time;
 
         self.angular_velocity = self.speed / self.wheel_radius;
-        self.speed += self.angular_acceleration * delta_time;
+
+        let deceleration_factor = 200.0;
+        self.speed += guy.tilt_angle.powi(2) * guy.tilt_angle.signum() * deceleration_factor;
+
         self.speed = self.speed.clamp(-1000.0, 1000.0);
         self.angle = (self.angle - self.angular_velocity * delta_time) % (2.0 * PI);
     }
@@ -41,7 +44,7 @@ pub fn init_segway(environment: &crate::environment::Environment) -> Segway {
         angular_acceleration: 0.0,
         wheel_radius,
         wheel_thickness,
-        speed: 200.0,
+        speed: 0.0,
         distance_traveled: 0.0,
     }
 }

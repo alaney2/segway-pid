@@ -44,6 +44,7 @@ pub fn update_game(
     let desired_tilt_angle = 0.0;
     let error = guy.tilt_angle - desired_tilt_angle;
     let angular_acceleration = pid_controller.update(error, dt);
-    segway.update(angular_acceleration, dt);
+    
+    segway.update(angular_acceleration, dt, guy);
     guy.update(segway, dt);
 }
