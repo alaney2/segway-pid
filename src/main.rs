@@ -1,11 +1,10 @@
 use macroquad::prelude::*;
 use crate::segway::{init_segway, draw_segway};
 use crate::environment::{init_environment, draw_environment};
-use crate::gui::{init_gui};
+use crate::gui::{init_gui, draw_speedometer};
 use crate::physics::PIDController;
 use crate::guy::{init_guy, draw_guy};
 use macroquad::prelude::get_frame_time;
-use egui_macroquad::egui;
 
 mod segway;
 mod environment;
@@ -72,6 +71,7 @@ fn update_game(
     let dt = get_frame_time();
     physics::update_game(segway, guy, environment, pid_controller, dt, guy.tilt_angle);
     gui::update_gui(gui, segway, guy, pid_controller);
+    draw_speedometer(segway.speed);
 }
 
 fn handle_input(_segway: &mut segway::Segway, guy: &mut guy::Guy, _environment: &mut environment::Environment) {
