@@ -1,10 +1,11 @@
 use macroquad::prelude::*;
 use crate::segway::{init_segway, draw_segway};
 use crate::environment::{init_environment, draw_environment};
-use crate::gui::{init_gui, update_gui};
+use crate::gui::{init_gui};
 use crate::physics::PIDController;
 use crate::guy::{init_guy, draw_guy};
 use macroquad::prelude::get_frame_time;
+use egui_macroquad::egui;
 
 mod segway;
 mod environment;
@@ -27,22 +28,23 @@ async fn main() {
     let mut environment = init_environment();
     let (mut segway, mut gui, mut guy, mut pid_controller) = init_game(&environment);
 
-    let back_color = Color::new(0.00, 0.43, 0.95, 1.00);
 
     loop {
         if is_key_pressed(KeyCode::Q) || is_key_pressed(KeyCode::Escape) {
             break;
         }
 
-        clear_background(back_color);
+        clear_background(BLUE);
 
         update_game(&mut segway, &mut guy, &mut environment, &mut gui, &mut pid_controller);
 
         handle_input(&mut segway, &mut guy, &mut environment);
 
-        draw_guy(&guy, &segway);
         draw_environment(&environment, &segway);
+        draw_guy(&guy, &segway);
         draw_segway(&segway);
+
+        egui_macroquad::draw();
 
         next_frame().await;
     }
@@ -72,7 +74,7 @@ fn update_game(
     gui::update_gui(gui, segway, guy, pid_controller);
 }
 
-fn handle_input(segway: &mut segway::Segway, guy: &mut guy::Guy, environment: &mut environment::Environment) {
+fn handle_input(_segway: &mut segway::Segway, guy: &mut guy::Guy, _environment: &mut environment::Environment) {
     let min_tilt_angle = -10.0_f32.to_radians();
     let max_tilt_angle = 10.0_f32.to_radians();
 
@@ -84,5 +86,6 @@ fn handle_input(segway: &mut segway::Segway, guy: &mut guy::Guy, environment: &m
     }
 
     guy.tilt_angle = guy.tilt_angle.clamp(min_tilt_angle, max_tilt_angle);
+    guy.tilt_angle = (guy.tilt_angle * 100.0).round() / 100.0;
 }
 

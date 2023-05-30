@@ -15,6 +15,31 @@ pub fn draw_environment(environment: &Environment, segway: &crate::segway::Segwa
     let window_width = screen_width();
     let window_height = screen_height();
 
+    for i in 0..24 {
+        if i % 3 == 0 {
+            draw_line(
+                0.0,
+                window_height - environment.ground_height - 120.0 * (i as f32),
+                window_width,
+                window_height - environment.ground_height - 120.0 * (i as f32),
+                1.0,
+                SKYBLUE,
+            );
+            draw_line(120.0 * (i as f32), 0.0, 120.0 * (i as f32), window_height, 1.0, SKYBLUE);
+        } else {
+            draw_line(
+                0.0,
+                window_height - environment.ground_height - 120.0 * (i as f32),
+                window_width,
+                window_height - environment.ground_height - 120.0 * (i as f32),
+                0.5,
+                SKYBLUE,
+            );
+            draw_line(120.0 * (i as f32), 0.0, 120.0 * (i as f32), window_height, 0.5, SKYBLUE);
+        }
+    }
+
+    // ground
     draw_line(
         0.0,
         window_height - environment.ground_height,

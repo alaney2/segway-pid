@@ -48,6 +48,4 @@ pub fn update_gui(gui: &mut Gui, segway: &Segway, guy: &Guy, pid_controller: &PI
     gui.integral = pid_controller.integral;
     gui.error = pid_controller.prev_error;
     gui.derivative = (gui.error - pid_controller.prev_error) / get_frame_time();
-
-    egui_macroquad::draw();
 }

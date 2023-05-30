@@ -36,10 +36,10 @@ impl PIDController {
 pub fn update_game(
     segway: &mut Segway,
     guy: &mut Guy,
-    environment: &mut Environment,
+    _environment: &mut Environment,
     pid_controller: &mut PIDController,
     dt: f32,
-    user_input: f32,
+    _user_input: f32,
 ) {
     let desired_tilt_angle = 0.0;
     let error = guy.tilt_angle - desired_tilt_angle;

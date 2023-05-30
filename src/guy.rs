@@ -10,7 +10,7 @@ pub struct Guy {
 }
 
 impl Guy {
-  pub fn update(&mut self, segway: &crate::segway::Segway, delta_time: f32) {
+  pub fn update(&mut self, segway: &crate::segway::Segway, _delta_time: f32) {
     self.start_x = segway.x - segway.wheel_radius / 2.0 + self.height * self.tilt_angle.sin();
     self.start_y = segway.y - self.height * self.tilt_angle.cos();
   }
