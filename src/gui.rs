@@ -3,9 +3,8 @@ use crate::physics::PIDController;
 use crate::guy::Guy;
 use egui_macroquad::egui;
 use egui::{
-    epaint::Shadow,
-    plot::{CoordinatesFormatter, Corner, HLine, Legend, Line, Plot, PlotBounds, PlotPoints},
-    Align, Align2, Color32, Context, DragValue, Frame, Layout, Pos2, Slider, Vec2,
+    plot::{HLine, Legend, Line, Plot, PlotBounds, PlotPoints},
+    Align, Align2, Color32, Layout,
 };
 use macroquad::prelude::*;
 use macroquad::text::draw_text;
