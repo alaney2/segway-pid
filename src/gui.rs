@@ -15,6 +15,7 @@ pub struct Gui {
     integral_history: VecDeque<f32>,
     error_history: VecDeque<f32>,
     derivative_history: VecDeque<f32>,
+    pub ui_scale: f32,
 }
 
 pub fn init_gui() -> Gui {
@@ -22,6 +23,7 @@ pub fn init_gui() -> Gui {
         integral_history: VecDeque::new(),
         error_history: VecDeque::new(),
         derivative_history: VecDeque::new(),
+        ui_scale: 1.0,
     }
 }
 
@@ -47,7 +49,7 @@ pub fn update_gui(
  
     egui_macroquad::ui(|ctx| {
         egui::Window::new("Segway PID Controller")
-            .anchor(Align2::LEFT_TOP, egui::emath::vec2(30., 30.))
+            .anchor(Align2::LEFT_TOP, egui::emath::vec2(30. * gui.ui_scale, 30. * gui.ui_scale))
             .fixed_size(egui::emath::vec2(250., 200.))
             .resizable(false)
             .movable(false)
@@ -56,24 +58,30 @@ pub fn update_gui(
             .show(ctx, |ui| {
                 ui.with_layout(Layout::top_down(Align::LEFT), |ui| {
                     ui.add(
-                        egui::Slider::new(&mut pid_controller.p, 0.0..=20.0).text("P ").drag_value_speed(0.01)
+                        egui::Slider::new(&mut pid_controller.p, 0.0..=20.0).text("P ")
                     );
-                    ui.add(egui::Slider::new(&mut pid_controller.i, 0.0..=10.0).text("I "));
-                    ui.add(egui::Slider::new(&mut pid_controller.d, 0.0..=10.0).text("D "));
+                    ui.add(
+                        egui::Slider::new(&mut pid_controller.i, 0.0..=10.0).text("I ")
+                    );
+                    ui.add(
+                        egui::Slider::new(&mut pid_controller.d, 0.0..=10.0).text("D ")
+                    );
 
                 });
                 ui.label(format!("Integral: {:.2}", pid_controller.integral));
                 ui.label(format!("Error: {:.2}", pid_controller.prev_error));
                 ui.label(format!("Derivative: {:.2}", pid_controller.derivative));
-                // ui.label(format!("Angular Velocity: {:.2}", segway.angular_velocity));
                 ui.label(format!("Angular Acceleration: {:.2} rad / s² ", segway.angular_acceleration));
                 ui.label(format!("Tilt Angle: {:.2} rad ", guy.tilt_angle));
                 ui.label(format!("Distance Traveled: {:.2} m ", segway.distance_traveled));
+                ui.add(
+                    egui::Slider::new(&mut gui.ui_scale, 0.5..=2.0).text("UI Scale")
+                );
             });
 
         egui::Window::new("PID Controller Graphs")
-            .anchor(Align2::RIGHT_TOP, egui::emath::vec2(-30., 30.))
-            .fixed_size(egui::emath::vec2(300., 200.))
+            .anchor(Align2::RIGHT_TOP, egui::emath::vec2(-30. * gui.ui_scale, 30. * gui.ui_scale))
+            .fixed_size(egui::emath::vec2(300. * gui.ui_scale, 200. * gui.ui_scale))
             .resizable(false)
             .movable(false)
             .collapsible(false)

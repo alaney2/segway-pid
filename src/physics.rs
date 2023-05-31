@@ -42,6 +42,7 @@ pub fn update_game(
     pid_controller: &mut PIDController,
     dt: f32,
     _user_input: f32,
+    gui: &mut crate::gui::Gui,
 ) {
     let desired_tilt_angle = 0.0;
     let error = guy.tilt_angle - desired_tilt_angle;
@@ -55,5 +56,5 @@ pub fn update_game(
         angular_acceleration = 0.0;
     }
     segway.update(angular_acceleration, dt, guy);
-    guy.update(segway, dt);
+    guy.update(segway, dt, gui);
 }

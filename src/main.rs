@@ -51,11 +51,11 @@ async fn main() {
 
 fn init_game(environment: &environment::Environment) -> (segway::Segway, gui::Gui, guy::Guy, physics::PIDController) {
     let segway = init_segway(&environment);
-    let guy = init_guy(&segway);
+    let gui = init_gui();
+    let guy = init_guy(&segway, &gui);
     (
         segway,
-        init_gui(),
-        // init_guy(segway),
+        gui,
         guy,
         PIDController::new(10.0, 1.0, 2.0),
     )
@@ -69,7 +69,7 @@ fn update_game(
     pid_controller: &mut physics::PIDController,
 ) {
     let dt = get_frame_time();
-    physics::update_game(segway, guy, environment, pid_controller, dt, guy.tilt_angle);
+    physics::update_game(segway, guy, environment, pid_controller, dt, guy.tilt_angle, gui);
     gui::update_gui(gui, segway, guy, pid_controller);
     draw_speedometer(segway.speed, segway.angular_velocity);
 }
