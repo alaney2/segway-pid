@@ -10,17 +10,19 @@ use egui::{
 use macroquad::prelude::*;
 use macroquad::text::draw_text;
 
+use std::collections::VecDeque;
+
 pub struct Gui {
-    pub integral: f32,
-    pub error: f32,
-    pub derivative: f32,
+    integral_history: VecDeque<f32>,
+    error_history: VecDeque<f32>,
+    derivative_history: VecDeque<f32>,
 }
 
 pub fn init_gui() -> Gui {
     Gui {
-        integral: 0.0,
-        error: 0.0,
-        derivative: 0.0,
+        integral_history: VecDeque::new(),
+        error_history: VecDeque::new(),
+        derivative_history: VecDeque::new(),
     }
 }
 
@@ -30,17 +32,24 @@ pub fn update_gui(
     guy: &Guy,
     pid_controller: &mut PIDController,
 ) {
+     gui.integral_history.push_back(pid_controller.integral);
+     gui.error_history.push_back(pid_controller.prev_error);
+     gui.derivative_history.push_back(pid_controller.derivative);
+ 
+     if gui.integral_history.len() > 100 {
+         gui.integral_history.pop_front();
+     }
+     if gui.error_history.len() > 100 {
+         gui.error_history.pop_front();
+     }
+     if gui.derivative_history.len() > 100 {
+         gui.derivative_history.pop_front();
+     }
+ 
     egui_macroquad::ui(|ctx| {
         egui::Window::new("Segway PID Controller")
-            .anchor(Align2::LEFT_TOP, egui::emath::vec2(20., 20.))
-            // .frame(Frame {
-            //     inner_margin: egui::Margin::same(0.),
-            //     outer_margin: egui::Margin::same(0.),
-            //     rounding: egui::Rounding::none(),
-            //     fill: Color32::TRANSPARENT,
-            //     shadow: Shadow::NONE,
-            //     stroke: egui::Stroke::NONE,
-            // })
+            .anchor(Align2::LEFT_TOP, egui::emath::vec2(30., 30.))
+            .fixed_size(egui::emath::vec2(250., 200.))
             .resizable(false)
             .movable(false)
             .collapsible(false)
@@ -48,34 +57,98 @@ pub fn update_gui(
             .show(ctx, |ui| {
                 ui.with_layout(Layout::top_down(Align::LEFT), |ui| {
                     ui.add(
-                        egui::Slider::new(&mut pid_controller.p, 0.0..=20.0).text("P ")
+                        egui::Slider::new(&mut pid_controller.p, 0.0..=20.0).text("P ").drag_value_speed(0.01)
                     );
                     ui.add(egui::Slider::new(&mut pid_controller.i, 0.0..=10.0).text("I "));
                     ui.add(egui::Slider::new(&mut pid_controller.d, 0.0..=10.0).text("D "));
 
                 });
                 ui.label(format!("Integral: {:.2}", pid_controller.integral));
-                ui.label(format!("Error: {:.2}", gui.error));
-                ui.label(format!("Derivative: {:.2}", gui.derivative));
-                ui.label(format!("Angular Velocity: {:.2}", segway.angular_velocity));
-                ui.label(format!("Angular Acceleration: {:.2}", segway.angular_acceleration));
-                ui.label(format!("Tilt Angle: {:.2}", guy.tilt_angle));
+                ui.label(format!("Error: {:.2}", pid_controller.prev_error));
+                ui.label(format!("Derivative: {:.2}", pid_controller.derivative));
+                // ui.label(format!("Angular Velocity: {:.2}", segway.angular_velocity));
+                ui.label(format!("Angular Acceleration: {:.2} rad / s² ", segway.angular_acceleration));
+                ui.label(format!("Tilt Angle: {:.2} rad ", guy.tilt_angle));
+                ui.label(format!("Distance Traveled: {:.2} m ", segway.distance_traveled));
             });
-    });
 
-    gui.integral = pid_controller.integral;
-    gui.error = pid_controller.prev_error;
-    gui.derivative = (gui.error - pid_controller.prev_error) / get_frame_time();
+        egui::Window::new("PID Controller Graphs")
+            .anchor(Align2::RIGHT_TOP, egui::emath::vec2(-30., 30.))
+            .fixed_size(egui::emath::vec2(300., 200.))
+            .resizable(false)
+            .movable(false)
+            .collapsible(false)
+            .title_bar(false)
+            .show(ctx, |ui| {
+                Plot::new("pid_plot")
+                    .legend(Legend::default().position(egui::plot::Corner::RightBottom))
+                    .allow_zoom(false)
+                    .allow_drag(false)
+                    .allow_scroll(false)
+                    .allow_boxed_zoom(false)
+                    .show_axes([false, false])
+                    .show_background(false)
+                    .show_x(false)
+                    .show_y(false)
+                    .show(ui, |plot_ui| {
+                        plot_ui.set_plot_bounds(PlotBounds::from_min_max(
+                            [0., -1. * 1.1],
+                            [100 as f64, 1. * 1.1],
+                        ));
+                        plot_ui.hline(HLine::new(0.).color(Color32::WHITE).width(1.));
+                        plot_ui.line(
+                            Line::new(
+                                gui.integral_history
+                                    .iter()
+                                    .enumerate()
+                                    .map(|(i, &v)| [i as f64, v as f64])
+                                    .collect::<PlotPoints>(),
+                            )
+                            .width(2.)
+                            .name("Integral"),
+                        );
+                        plot_ui.line(
+                            Line::new(
+                                gui.error_history
+                                    .iter()
+                                    .enumerate()
+                                    .map(|(i, &v)| [i as f64, v as f64])
+                                    .collect::<PlotPoints>(),
+                            )
+                            .width(2.)
+                            .name("Error"),
+                        );
+                        plot_ui.line(
+                            Line::new(
+                                gui.derivative_history
+                                    .iter()
+                                    .enumerate()
+                                    .map(|(i, &v)| [i as f64, v as f64])
+                                    .collect::<PlotPoints>(),
+                            )
+                            .width(2.)
+                            .name("Derivative"),
+                        );
+
+                    });
+            });
+    })
 }
 
-
-pub fn draw_speedometer(speed: f32) {
-    let screen_width = screen_width();
-    // let screen_height = screen_height();
-    let text = format!("Velocity: {:.2} m/s", speed);
+pub fn draw_speedometer(speed: f32, angular_velocity: f32) {
+    let text = format!("Velocity: {:.1} m/s", speed);
+    
     let text_width = text.len() as f32 * 10.0;
-    let x = (screen_width - text_width) / 2.0;
-    let y = 50.0; // Top margin
+    let x = (screen_width() - text_width) * 2.0 / 5.0;
+    let y = 60.0;
 
     draw_text(&text, x, y, 30.0, WHITE);
+
+    let angular_text = format!("Angular Velocity: {:.1} rad/s", angular_velocity);
+
+    let angular_text_width = angular_text.len() as f32 * 10.0;
+    let angular_x = (screen_width() - angular_text_width) * 2.0 / 5.0;
+    let angular_y = 100.0;
+
+    draw_text(&angular_text, angular_x, angular_y, 30.0, WHITE);
 }

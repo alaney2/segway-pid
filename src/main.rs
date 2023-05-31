@@ -71,7 +71,7 @@ fn update_game(
     let dt = get_frame_time();
     physics::update_game(segway, guy, environment, pid_controller, dt, guy.tilt_angle);
     gui::update_gui(gui, segway, guy, pid_controller);
-    draw_speedometer(segway.speed);
+    draw_speedometer(segway.speed, segway.angular_velocity);
 }
 
 fn handle_input(_segway: &mut segway::Segway, guy: &mut guy::Guy, _environment: &mut environment::Environment) {

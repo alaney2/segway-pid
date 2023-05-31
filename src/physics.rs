@@ -8,6 +8,7 @@ pub struct PIDController {
     pub d: f32,
     pub integral: f32,
     pub prev_error: f32,
+    pub derivative: f32,
 }
 
 impl PIDController {
@@ -18,6 +19,7 @@ impl PIDController {
             d,
             integral: 0.0,
             prev_error: 0.0,
+            derivative: 0.0,
         }
     }
 
@@ -26,10 +28,10 @@ impl PIDController {
         let integral_limit = 1.0;
         self.integral = self.integral.clamp(-integral_limit, integral_limit);
 
-        let derivative = (error - self.prev_error) / dt;
+        self.derivative = (error - self.prev_error) / dt;
         self.prev_error = error;
 
-        self.p * error + self.i * self.integral + self.d * derivative
+        self.p * error + self.i * self.integral + self.d * self.derivative
     }
 }
 
@@ -43,8 +45,15 @@ pub fn update_game(
 ) {
     let desired_tilt_angle = 0.0;
     let error = guy.tilt_angle - desired_tilt_angle;
-    let angular_acceleration = pid_controller.update(error, dt);
+    let mut angular_acceleration = pid_controller.update(error, dt);
     
+    let max_speed = 1000.0;
+    let min_speed = -1000.0;
+    if segway.speed >= max_speed && angular_acceleration > 0.0 {
+        angular_acceleration = 0.0;
+    } else if segway.speed <= min_speed && angular_acceleration < 0.0 {
+        angular_acceleration = 0.0;
+    }
     segway.update(angular_acceleration, dt, guy);
     guy.update(segway, dt);
 }
