@@ -12,4 +12,5 @@ cargo build --target wasm32-unknown-unknown
 cargo install basic-http-server
 basic-http-server static
 ```
+
 ![Screenshot 2023-05-31 at 12 48 53 AM](https://github.com/alaney2/segway-pid/assets/70783523/dfc2aab3-8f98-4a62-a7b9-ddb9df70f465)
