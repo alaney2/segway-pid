@@ -1,6 +1,6 @@
 # segway-pid
 
-This project is an exercise in implementing a simple Proportional-Integral-Derivative (PID) controller using the Rust programming language. The goal of this exercise is to explore the Rust language and its features while learning about PID controllers and their applications in various control systems. The code is not very organized. 
+This project is an exercise in implementing a simple Proportional-Integral-Derivative (PID) controller using the Rust programming language. The goal of this exercise is to explore the Rust language and its features while learning about PID controllers and their applications in various control systems. The code is not very organized.
 
 ## Getting Started
 
